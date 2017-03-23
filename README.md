@@ -1,2 +1,2 @@
-# iMIS-Snippets
-iMIS Snippets and Utility Scripts
+# Snippets
+Snippets and Utility Scripts
