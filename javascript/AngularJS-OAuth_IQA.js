@@ -2,7 +2,7 @@
 //Instead of using RequestVerificationToken method, we use OAuth to call the sheduler
 //Can be used in cases when the user is not logged in
 
-var tokenPostBody = "grant_type=password&username=MANAGER&password=***REMOVED***";
+var tokenPostBody = "grant_type=password&username=MANAGER&password=PASSWORD";
 
 return $http.post("https://" + window.location.hostname + "/asi.scheduler_imis/token", tokenPostBody, {}).then(function (response)
 {
