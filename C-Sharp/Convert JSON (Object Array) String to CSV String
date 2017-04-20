@@ -1,0 +1,89 @@
+using System;
+using System.Text;
+using System.Xml;
+using Newtonsoft.Json;
+using System.Data;
+using ExtensionMethods;
+using System.Linq;
+using System.Web;
+
+namespace abc
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int counter = 0;
+            string line;
+            var jsonObject = new object();
+
+            // Read the file line by line.
+            System.IO.StreamReader file = new System.IO.StreamReader("Files/exampleText.txt");
+
+            while ((line = file.ReadLine()) != null)
+            {
+                counter++;
+                //This is okay because the entire json is on one line, but you would need to concat the lines if it has multiple lines
+                jsonObject = JsonConvert.DeserializeObject<object>(line);
+            }
+
+            file.Close();
+            
+            //If you already have a JSON string and you're not reading from a file, then only deserialize it into an object
+            //jsonObject = JsonConvert.DeserializeObject<object>(jsonString);
+            
+            XmlNode xml = JsonConvert.DeserializeXmlNode("{\"Row\":" + jsonObject + "}", "BSI");
+
+            XmlDocument xmldoc = new XmlDocument();
+
+            //Create XmlDoc Object
+            xmldoc.LoadXml(xml.InnerXml);
+
+            //Create XML Steam 
+            var xmlReader = new XmlNodeReader(xmldoc);
+
+            DataSet dataSet = new DataSet();
+
+            //Load Dataset with Xml
+            dataSet.ReadXml(xmlReader);
+
+            //return single table inside of dataset
+            var csv = dataSet.Tables[1].ToCSV(",");
+            
+            //display the csv String to console
+            Console.WriteLine(csv);
+            
+            // Suspend the screen.
+            Console.ReadLine();
+        }
+    }
+}
+
+namespace ExtensionMethods
+{
+    public static class MyExtensions
+    {
+        public static string ToCSV(this DataTable table, string delimator)
+        {
+            var result = new StringBuilder();
+
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                result.Append(table.Columns[i].ColumnName);
+                result.Append(i == table.Columns.Count - 1 ? "\n" : delimator);
+            }
+
+            foreach (DataRow row in table.Rows)
+            {
+                for (int i = 0; i < table.Columns.Count; i++)
+                {
+                    result.Append(row[i].ToString());
+                    result.Append(i == table.Columns.Count - 1 ? "\n" : delimator);
+                }
+            }
+
+            return result.ToString().TrimEnd(new char[] { '\r', '\n' });
+            //return result.ToString();
+        }
+    }
+}
