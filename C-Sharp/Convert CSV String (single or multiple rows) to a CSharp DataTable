@@ -1,0 +1,66 @@
+using System;
+using System.Data;
+using System.Linq;
+using Microsoft.VisualBasic.FileIO;
+using System.IO;
+using System.Collections.Generic;
+
+namespace abc
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+            //csv with multiple rows
+            string w = "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nService,\"A Description with commas enclosed in escaped quotes,l,l,l,l\",0.5,190.0,95.0,false,false,123456\nProduct,A description,1.00,100.00,100.0,false,false,\n";
+            //csv with only one row
+            string s = "kind,description,quantity,unit_price,amount,taxed,taxed2,project_id\nProduct,A description,1.00,100.00,100.0,false,false,\n";
+            
+            DataTable ourDataTable = new DataTable();
+            
+            string[] tableData = w.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            
+            //All rows except first column row
+            string noHeaders = w.Substring(w.IndexOf("\n")+1);
+            
+            //we use this parser to deal with commas being enclosed in quotes
+            TextFieldParser parser = new TextFieldParser(new StringReader(noHeaders));
+
+            parser.HasFieldsEnclosedInQuotes = true;
+            parser.SetDelimiters(",");
+
+            var fields = new List<string[]>();
+            
+            //generate list of rows properly parsed
+            while (!parser.EndOfData)
+            {
+                fields.Add(parser.ReadFields());
+            }
+            
+            //get our column row
+            var col = from cl in tableData[0].Split(",".ToCharArray()) select new DataColumn(cl);
+
+            //add columns
+            ourDataTable.Columns.AddRange(col.ToArray());
+            
+            //add rows
+            foreach (var item in fields)
+            {
+                ourDataTable.Rows.Add(item);
+            }
+
+            //displays DataTable fields
+            foreach (DataRow dataRow in ourDataTable.Rows)
+            {
+                foreach (var item in dataRow.ItemArray)
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine("new row");
+            }
+            
+            Console.ReadLine();
+        }
+    }
+}
