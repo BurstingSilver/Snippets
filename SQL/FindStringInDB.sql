@@ -1,3 +1,4 @@
+-- Searches the entire DB for a speficied string
 DECLARE @str AS VARCHAR(200) = 'SOME_STRING'
 
 SELECT
