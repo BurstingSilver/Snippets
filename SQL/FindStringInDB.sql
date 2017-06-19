@@ -13,5 +13,13 @@ FROM
 WHERE 
 	S.schema_id NOT IN (3,4) -- avoid searching in sys and INFORMATION_SCHEMA schemas
 	AND C.text LIKE '%' + @str + '%' 
-ORDER BY
-	[Schema]
+UNION 
+SELECT      
+	'INFORMATION_SCHEMA' AS [Schema], 
+	TABLE_NAME AS  [Object], 
+	'COLUMN' AS [Object_Type], 
+	COLUMN_NAME AS [Object_Definition]
+FROM        
+	INFORMATION_SCHEMA.COLUMNS
+WHERE       
+	COLUMN_NAME LIKE '%' + @str + '%'
