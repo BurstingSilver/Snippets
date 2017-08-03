@@ -1,0 +1,5 @@
+select parametervalue, * from systemconfig where parametername like 'PCI.session%'
+
+UPDATE SystemConfig
+SET ParameterValue = 0 --no timeout
+where ParameterName = 'PCI.SessionTimeoutMinutesSysAdmin'
