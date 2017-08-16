@@ -1,6 +1,6 @@
 // jQuery passed in as $ to an Immediately Invoked Function Expression (IIFE)
 (function($){
-    var schedulerPath = "Asi.Scheduler_Web;
+    var schedulerPath = "Asi.Scheduler_Web";
     var schedulerUrl = "https://" + window.location.hostname + "/" + schedulerPath;
     var username = "MANAGER";
     var password = "password";
