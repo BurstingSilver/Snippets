@@ -11,6 +11,7 @@
         data: "grant_type=password&username=" + username + "&password=" + password
     })
     .done(function(data) {
+        var token = data.access_token;
         var userID = 123456;
         var entityTypeName = "My_MultiInstance_UDT"
 
@@ -49,7 +50,7 @@
             contentType: "application/json",
             headers:
             {
-                "authorization": "Bearer " + data.access_token
+                "authorization": "Bearer " + token
             },
             data: JSON.stringify(item)
         })
@@ -62,7 +63,7 @@
             url: schedulerUrl + "/api/" + entityTypeName + "?PartyID=" + userID,
             headers:
             {
-                "authorization": "Bearer " + data.access_token
+                "authorization": "Bearer " + token
             }
         })
         .done(function(data) {
@@ -75,18 +76,38 @@
             var property = $.grep(first.Properties.$values, function(value, index) { return value.Name == "Info" });
             property[0].Value = "Hello updated World!";
     
+            // first try the 20.2.49 syntax, if it fails, we try again with the 20.2.64 syntax
+            var putUrl = schedulerUrl + "/api/" + entityTypeName + "/" + userID + "," + seqn;
             $.ajax({
                 method: "PUT",
-                url: schedulerUrl + "/api/" + entityTypeName + "/" + userID + "," + seqn,
+                url: putUrl,
                 contentType: "application/json",
                 headers:
                 {
-                    "authorization": "Bearer " + data.access_token
+                    "authorization": "Bearer " + token
                 },
                 data: JSON.stringify(first)
             })
             .done(function(data) {console.log(data);})
-            .fail(function(data) {console.log(data);});
+            .fail(function(data) {
+                console.log(data);
+                // try again with the 20.2.64 syntax
+                putUrl = schedulerUrl + "/api/" + entityTypeName + "/~" + userID + "|" + seqn;
+                $.ajax({
+                    method: "PUT",
+                    url: putUrl,
+                    contentType: "application/json",
+                    headers:
+                    {
+                        "authorization": "Bearer " + token
+                    },
+                    data: JSON.stringify(first)
+                })
+                .done(function(data) {console.log(data);})
+                .fail(function(data) {
+                    console.log(data);
+                });
+            });
         })
         .fail(function(data) {console.log(data);});
         })
