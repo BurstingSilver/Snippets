@@ -10,6 +10,18 @@
         data: "grant_type=password&username=" + username + "&password=" + password
     })
     .done(function(data) {
+        
+        $.ajax({
+            method: "GET",
+            url: schedulerUrl + "/api/Relationship/_metadata",
+            headers:
+            {
+                "authorization": "Bearer " + data.access_token
+            },
+        })
+        .done(function(data) {console.log(data);})
+        .fail(function(data) {console.log(data);});
+        
         $.ajax({
             method: "GET",
             url: schedulerUrl + "/api/Party",
