@@ -77,7 +77,7 @@
     
             $.ajax({
                 method: "PUT",
-                url: gWebRoot + "/api/" + entityTypeName + "/" + userID + "," + seqn,
+                url: schedulerUrl + "/api/" + entityTypeName + "/" + userID + "," + seqn,
                 contentType: "application/json",
                 headers:
                 {
