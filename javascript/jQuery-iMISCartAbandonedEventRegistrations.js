@@ -6,10 +6,10 @@ var registrantIds = "";
 // Runs recursively with 500 records at a time due to the default limit of 500 results
 (function($){
 	console.log("Starting Processing");
-	ProcessData(500, 0, $);
+	ProcessData(500, 0);
 	
 
-	function ProcessData(limit, offset, $){
+	function ProcessData(limit, offset){
 		$.ajax({
 		"method": "get",
 		"url": gWebRoot + "/api/Cart?Limit=" + limit + "&offset=" + offset,
