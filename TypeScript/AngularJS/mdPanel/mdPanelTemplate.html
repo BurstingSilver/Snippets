@@ -1,0 +1,97 @@
+<style>
+    .bsi-panel {
+        width: 35%;
+    }
+
+    @media(max-width: 3000px) {
+        .bsi-panel {
+            width: 40% !important;
+        }
+    }
+
+    @media(max-width: 2500px) {
+        .bsi-panel {
+            width: 50% !important;
+        }
+    }
+
+    @media(max-width: 2000px) {
+        .bsi-panel {
+            width: 60% !important;
+        }
+    }
+
+    @media(max-width: 1200px) {
+        .bsi-panel {
+            width: 80% !important;
+        }
+    }
+</style>
+<script>
+    angular.element(".rwMaximizeButton, .rwCloseButton, .rwRefreshButton")
+        .css("background-image", "url(" + window.location.origin +
+            "/WebResource.axd?d=HwxVk2TMDc-rsT5OiCAoYuPAX6Ea0wgipBrHyjV2c4CA53bE4eUrRXfbPIO_6ng8_GeOQf8TmVYHz-ksu0WEzuwmE1LQLv2cI0iEgtt48J4PX7rrsHPwsLWtZbzsSVJYic0A2YNTRpe02wc3fnwNBaMzV14NlgYtGhDJlB5abrhdFJAX0&t=636299895320000000)");
+
+    function maximize() {
+        if (angular.element(".bsi-panel").width() / angular.element(".bsi-panel").parent().width() * 100 !== 100) {
+            angular.element(".bsi-panel").css("height", "100%");
+            angular.element(".bsi-panel").css("width", "100%");
+            angular.element(".dialog-footer").css("position", "absolute");
+            angular.element(".dialog-footer").css("bottom", "0");
+            angular.element(".dialog-footer").css("left", "15px");
+            angular.element(".dialog-footer").css("width", "100%");
+            angular.element(".dialog-footer").children().css("padding", "0");
+            angular.element(".rwMaximizeButton").css("background-position", "-111px -1811px");
+        } else {
+            angular.element(".bsi-panel").css("height", "");
+            angular.element(".bsi-panel").css("width", "");
+            angular.element(".dialog-footer").css("position", "");
+            angular.element(".dialog-footer").css("bottom", "");
+            angular.element(".dialog-footer").css("left", "");
+            angular.element(".dialog-footer").css("width", "");
+            angular.element(".dialog-footer").children().css("padding", "");
+            angular.element(".rwMaximizeButton").css("background-position", "");
+        }
+
+        //Refresh the grid to resize properlly **Note Only use if panel contains ui-grid
+        <!-- var scope = angular.element(".bsi-panel").parent().scope(); -->
+
+        <!-- setTimeout(function () { -->
+            <!-- scope.vm.gridApi.core.handleWindowResize(); -->
+        <!-- }, 500); -->
+    }
+</script>
+<div id="templatePanel" role="dialog" aria-label="Template Panel" layout="column" layout-align="center center">
+    <form name="templatePanel" ng-cloak novalidate>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Template Panel</h2>
+                <span flex></span>
+                <i class="rwRefreshButton" title="Refresh" ng-click="vm.init()">
+                    <span>A</span>
+                </i>
+                <i class="rwMaximizeButton" title="Maximize" onclick="maximize()">
+                    <span>A</span>
+                </i>
+                <i class="rwCloseButton" title="Close" ng-click="vm.cancel()">
+                    <span>A</span>
+                </i>
+            </div>
+        </md-toolbar>
+        <div class="dialog-content">
+            <div class="row">
+                <div class="col-xs-12">Panel Template</div>
+            </div>
+        </div>
+        <div class="row dialog-footer">
+            <div class="col-xs-12">
+                <button class="PrimaryButton TextButton" ng-click="vm.close()">Submit</button>
+                <button class="TextButton pull-right" ng-click="vm.cancel()">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
