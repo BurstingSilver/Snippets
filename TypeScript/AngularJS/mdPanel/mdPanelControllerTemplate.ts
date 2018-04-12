@@ -10,7 +10,6 @@ module Shell {
          */
         public static $inject = [
             "mdPanelRef",
-            "alertService",
             "onClose"
         ];
 
@@ -18,11 +17,9 @@ module Shell {
          * Constructor
          *
          * @param mdPanelRef A reference to a created panel. This reference contains a unique id for the panel, along with the following properties
-         * @param alertService This service is used to display alerts to the user
          * @param onClose this is used to trigger the onClose event so we can perform logic after the popup has been closed
          */
         constructor(private readonly mdPanelRef: ng.material.IPanelRef,        
-            private readonly alertService: IAlertService,
             private readonly onClose: Function) {
         }
 
