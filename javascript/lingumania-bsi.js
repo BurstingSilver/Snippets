@@ -1,6 +1,5 @@
 /*
 LICENSE AND TERMS OF USE
-
 Lingumania.js is licensed under the terms of https://creativecommons.org/licenses/by-nd/3.0/ license, 
 which means it can be used freely on commercial or non commercial websites as long as the language switcher links back to www.lingumania.com. 
 You may modify the code only if you use it to translate your own website. In all other cases, modifications or redistribution, 
@@ -327,17 +326,17 @@ whether standalone or as part of another javascript, are not permitted without p
 
     function translateDOM() {
         if (linguJSON) {
-			console.log("lingumania-bsi", "Found translation settings - processing.");
-			
-			if (!linguJSON.translated_segments)
-				console.log("lingumania-bsi", "No translation segments found. Stopping.");
-				
-			if (!linguJSON.translation_enabled || linguJSON.translation_enabled !== true)
-				console.log("lingumania-bsi", "Translation disabled. Stopping.");
-				
+            console.log("lingumania-bsi", "Found translation settings - processing.");
+            
+            if (!linguJSON.translated_segments)
+                console.log("lingumania-bsi", "No translation segments found. Stopping.");
+                
+            if (!linguJSON.translation_enabled || linguJSON.translation_enabled !== true)
+                console.log("lingumania-bsi", "Translation disabled. Stopping.");
+                
             if (linguJSON.translated_segments && linguJSON.translation_enabled === true) {
-				console.log("lingumania-bsi", "Translation enabled, and found translated segments. Proceeding with translation.");
-				
+                console.log("lingumania-bsi", "Translation enabled, and found translated segments. Proceeding with translation.");
+                
                 var translatedSegments = linguJSON.translated_segments;
 
                 var specialTags = getElementsByTagNames(['b', 'u', 'i', 'strong', 'em', 'abbr', 'sub', 'sup', 'big', 'small']);
@@ -436,11 +435,14 @@ whether standalone or as part of another javascript, are not permitted without p
                 var inputs = d.getElementsByTagName('input');
                 for (var i = 0; i < inputs.length; i++) {
                     var input = inputs[i];
-                    if (isTranslatableSegment(input.value.trim())) {
-                        for (var j = 0; j < translatedSegments.length; j++) {
-                            if (translatedSegments[j].source == input.value.trim()) {
-                                input.value = translatedSegments[j].target;
-                                break;
+                    if (input.type !== "hidden")
+                    {
+                        if (isTranslatableSegment(input.value.trim())) {
+                            for (var j = 0; j < translatedSegments.length; j++) {
+                                if (translatedSegments[j].source == input.value.trim()) {
+                                    input.value = translatedSegments[j].target;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -509,16 +511,21 @@ whether standalone or as part of another javascript, are not permitted without p
                 }
             }
         }
-		
-		console.log("lingumania-bsi", "Translation complete, showing body content.");
-        d.body.style.visibility = 'visible';
     }
 
     var linguLoader = function () {
-		console.log("lingumania-bsi", "Hiding body content for translation.");
-		d.body.style.visibility = "hidden";
-		translateDOM();
+        console.log("lingumania-bsi", "Running translation engine.");
+        translateDOM();
     };
 
-    w.addEventListener ? w.addEventListener("load", linguLoader, false) : w.attachEvent("onload", linguLoader);
+    var initializeLoader = function () {
+        console.log("lingumania-bsi", "Registering translation engine to run on AJAX postback.");
+        var requestManager = Sys.WebForms.PageRequestManager.getInstance();
+        requestManager.add_pageLoaded(linguLoader);
+        
+        linguLoader();
+    }
+    
+    w.addEventListener ? w.addEventListener("load", initializeLoader, false) : w.attachEvent("onload", initializeLoader);
+    
 }(window, document));
