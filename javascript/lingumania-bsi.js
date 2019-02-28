@@ -363,6 +363,8 @@ whether standalone or as part of another javascript, are not permitted without p
                                 for (var i = 0; i < current.attributes.length; i++) {
                                     if (current.attributes[i].value == "notranslate")
                                         canBeTranslated = false;
+                                    if (current.classList.contains("notranslate"))
+                                        canBeTranslated = false;
                                 }
                             }
                         }
