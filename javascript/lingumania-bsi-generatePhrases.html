@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style type="text/css">
+        body
+        {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+        table
+        {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+        table th
+        {
+            background-color: #F7F7F7;
+            color: #333;
+            font-weight: bold;
+        }
+        table th, table td
+        {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="fileUpload" />
+    <input type="button" id="upload" value="Upload" onclick="Upload()" />
+    <hr />
+	<div id="demo"></div>
+    <div id="dvExcel">
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script type="text/javascript">
+        function Upload() {
+            //Reference the FileUpload element.
+            var fileUpload = document.getElementById("fileUpload");
+
+            //Validate whether File is valid Excel file.
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+            if (regex.test(fileUpload.value.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+
+                    //For Browsers other than IE.
+                    if (reader.readAsBinaryString) {
+                        reader.onload = function (e) {
+                            ProcessExcel(e.target.result);
+                        };
+                        reader.readAsBinaryString(fileUpload.files[0]);
+                    } else {
+                        //For IE Browser.
+                        reader.onload = function (e) {
+                            var data = "";
+                            var bytes = new Uint8Array(e.target.result);
+                            for (var i = 0; i < bytes.byteLength; i++) {
+                                data += String.fromCharCode(bytes[i]);
+                            }
+                            ProcessExcel(data);
+                        };
+                        reader.readAsArrayBuffer(fileUpload.files[0]);
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid Excel file.");
+            }
+        };
+        function ProcessExcel(data) {
+            //Read the Excel File data.
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            //Fetch the name of First Sheet.
+            var firstSheet = workbook.SheetNames[0];
+
+            //Read all rows from First Sheet into an JSON array.
+            var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+
+            //Create a HTML Table element.
+			var header = 'var linguJSON = {\n\t"translation_enabled" : true, \n\t"translated_segments": \n\t[\n';
+			
+            //Add the data rows from Excel file.
+            for (var i = 0; i < excelRows.length; i++) 
+			{
+				var sourceData = excelRows[i].source;
+				sourceData.replace(/(\r\n|\n|\r)/gm," ");
+				
+				var targetData = excelRows[i].target;
+				targetData.replace(/(\r\n|\n|\r)/gm," ");
+				
+				header = header + '\t\t{"source": "' + sourceData + '",\n \t\t "target": "' + targetData + '"},\n';
+            }
+			
+			header = header.slice(0,-3)
+			header = header + "}\n\t]\n};";
+
+			download('languageData.js', header);
+        };
+		function download(filename, text) {
+			var pom = document.createElement('a');
+			pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+			pom.setAttribute('download', filename);
+
+			if (document.createEvent) {
+				var event = document.createEvent('MouseEvents');
+				event.initEvent('click', true, true);
+				pom.dispatchEvent(event);
+			}
+			else {
+				pom.click();
+			}
+		}
+    </script>
+</body>
+</html>
