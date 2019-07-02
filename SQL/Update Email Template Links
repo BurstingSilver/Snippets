@@ -1,0 +1,48 @@
+DECLARE @xml XML
+DECLARE @HtmlTemplate AS VARCHAR(MAX)
+DECLARE @HtmlTemplateNew AS VARCHAR(MAX)
+DECLARE @DocumentKey AS varchar(100)
+DECLARE @OldWebsiteUrl AS varchar(100)
+DECLARE @NewWebsiteUrl AS varchar(100)
+SET @OldWebsiteUrl = 'https://OldDomain.com'
+SET @NewWebsiteUrl = 'https://NewDomain.com'
+DECLARE HtmlCursor CURSOR FOR
+    SELECT DocumentKey
+FROM DocumentMain
+WHERE DocumentTypeCode = 'COM' AND DocumentStatusCode = 40
+
+OPEN HtmlCursor
+FETCH NEXT FROM HtmlCursor into @DocumentKey
+WHILE @@FETCH_STATUS = 0
+ Begin
+    BEGIN TRY
+        SET @xml=(select cast(cast(Blob as varbinary(max)) as varchar(max))
+    FROM [dbo].[DocumentMain]
+    WHERE  DocumentKey = @DocumentKey)
+    SELECT @xml
+        SET @HtmlTemplate = CONVERT(varchar(MAX), (
+        SELECT @xml.query('
+        declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";
+        ns:CommunicationData/ns:OutputSteps/ns:CommunicationOutputStep/ns:MessageTemplate/ns:TemplateText/text()')))
+        print 'Doc Key' + @DocumentKey
+        SET @HtmlTemplateNew = REPLACE(@HtmlTemplate,'&',CHAR(0x26))
+        
+        SET @HtmlTemplateNew = REPLACE(@HtmlTemplateNew, @OldWebsiteUrl, @NewWebsiteUrl);
+        SET @HtmlTemplateNew = REPLACE(REPLACE(@HtmlTemplateNew, '&lt;', '<'), '&gt;', '>') 
+        SET @HtmlTemplateNew = REPLACE(@HtmlTemplateNew, '&#x0D;', '');
+        SET @HtmlTemplateNew = REPLACE(@HtmlTemplateNew, '&amp;', '&');
+        SET @xml.modify('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";
+            replace value of (ns:CommunicationData/ns:OutputSteps/ns:CommunicationOutputStep/ns:MessageTemplate/ns:TemplateText/text())[1] with sql:variable("@HtmlTemplateNew")')
+        SELECT @xml
+        UPDATE DocumentMain
+        SET   blob= CONVERT(varchar(MAX), @xml)
+        WHERE [DocumentKey] = @DocumentKey
+    END TRY
+ 
+    BEGIN CATCH
+        PRINT 'Document: ' + @DocumentKey + 'Error: ' + ERROR_MESSAGE()
+    END CATCH
+    FETCH NEXT FROM HtmlCursor into @DocumentKey
+END
+CLOSE HtmlCursor
+DEALLOCATE HtmlCursor
