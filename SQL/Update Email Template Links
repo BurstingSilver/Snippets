@@ -4,8 +4,8 @@ DECLARE @HtmlTemplateNew AS VARCHAR(MAX)
 DECLARE @DocumentKey AS varchar(100)
 DECLARE @OldWebsiteUrl AS varchar(100)
 DECLARE @NewWebsiteUrl AS varchar(100)
-SET @OldWebsiteUrl = 'https://OldDomain.com'
-SET @NewWebsiteUrl = 'https://NewDomain.com'
+SET @OldWebsiteUrl = 'https://OldDomain.com' --***** Update this link
+SET @NewWebsiteUrl = 'https://NewDomain.com' --***** Update this link
 DECLARE HtmlCursor CURSOR FOR
     SELECT DocumentKey
 FROM DocumentMain
