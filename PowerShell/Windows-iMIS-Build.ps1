@@ -1,4 +1,4 @@
-#Usage .\install-imis20.ps1 -DeveloperApps 'True' -SQLServer 'True'
+#Usage .\install-imis20.ps1 -DeveloperApps 'True' -SQLServer 'True' -Reinstall 'True'
 
 <#*****************************************************************************************
 Parameters
@@ -36,6 +36,9 @@ function InstallDeveloperTools
 	
 	#Install Paint.NET
 	choco install paint.net
+	
+	#Install Google Drive File Stream
+	choco install google-drive-file-stream
 }
 
 function InstallSQLServerExpress
@@ -60,8 +63,13 @@ function Disable-IEESC
 <#*****************************************************************************************
 Main Program Start
 *****************************************************************************************#>
-# windows explorer settings show file extensions
-reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced /v HideFileExt /t REG_DWORD /d 0 /f
+set-executionpolicy remotesigned
+
+if ($Reinstall -ne "True")
+{
+  # windows explorer settings show file extensions
+	reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced /v HideFileExt /t REG_DWORD /d 0 /f
+}
 
 #Install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
