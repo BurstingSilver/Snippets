@@ -133,3 +133,4 @@ choco install made2010
 if ($DeveloperApps -eq "True") { InstallDeveloperTools }
 if ($SQLServer -eq "True") { InstallSQLServerExpress }
 
+	
