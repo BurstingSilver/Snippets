@@ -130,6 +130,9 @@ choco install ssdtbi.vs2012
 #Install Microsoft Access DB Drivers 2010
 choco install made2010
 
+#Install Microsoft ODBC Update Driver
+choco install sqlserver-odbcdriver
+
 if ($DeveloperApps -eq "True") { InstallDeveloperTools }
 if ($SQLServer -eq "True") { InstallSQLServerExpress }
 
