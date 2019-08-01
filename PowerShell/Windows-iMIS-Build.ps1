@@ -1,4 +1,5 @@
-#Usage .\install-imis20.ps1 -DeveloperApps 'True' -SQLServer 'True' -Reinstall 'True'
+#Usage for new developer machines .\install-imis20.ps1 -DeveloperApps 'True' -SQLServer 'True' -Reinstall 'True'
+#Usage for iMIS Server machines .\install-imis20.ps1 -DeveloperApps 'False' -SQLServer 'False' -Reinstall 'False'
 
 <#*****************************************************************************************
 Parameters
