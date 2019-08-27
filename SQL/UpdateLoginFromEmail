@@ -1,0 +1,47 @@
+
+/****** Object:  StoredProcedure [dbo].[BSI_UpdateLoginEmail]    Script Date: 8/27/2019 11:38:30 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		Des HYmers
+-- Description:	This will update the email address for the login, create a PA task on the name.email field
+-- =============================================
+CREATE PROCEDURE [dbo].[BSI_UpdateLoginEmail] @triggerid varchar(10)
+	
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	UPDATE au SET au.UserName = UPPER(n.Email), au.LoweredUserName = LOWER(n.Email) FROM aspnet_Users au
+join UserMain um on au.UserId = um.ProviderKey
+join aspnet_Membership  on au.UserId = aspnet_Membership.UserId
+join Name n on n.ID = um.ContactMaster WHERE n.ID = @triggerid;
+
+UPDATE aspnet_Membership SET aspnet_Membership.email = n.Email FROM aspnet_Users au
+join UserMain um on au.UserId = um.ProviderKey
+join aspnet_Membership  on au.UserId = aspnet_Membership.UserId
+join Name n on n.ID = um.ContactMaster WHERE n.ID = @triggerid;
+
+UPDATE um SET um.UserId = UPPER(n.Email) FROM 
+UserMain um join Name n on n.ID = um.ContactMaster WHERE n.ID = @triggerid;
+
+UPDATE ns SET ns.web_login = UPPER(n.email) FROM name as n INNER JOIN Name_Security as ns ON ns.id = n.id WHERE n.id = @triggerid;
+
+END
+
+
+
+
+GO
+
+
