@@ -32,6 +32,20 @@ ELSE BEGIN
        VALUES ('System_Control.SystemName', @destDBName + ' ' + CONVERT(VARCHAR(10), GETDATE(), 101))
 END
 
+--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--******** Temporary Email Mask ********
+--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ALTER TABLE NAME DISABLE TRIGGER ALL
+UPDATE NAME
+SET EMAIL = CONCAT(ID,'@clientdomain.com')
+ALTER TABLE NAME ENABLE TRIGGER ALL
+
+ALTER TABLE NAME_ADDRESS DISABLE TRIGGER ALL
+UPDATE NAME_ADDRESS
+SET EMAIL = CONCAT(ID,'@clientdomain.com')
+ALTER TABLE NAME_ADDRESS ENABLE TRIGGER ALL
+
+
 /**********************************************/
 /*** Update Publishing Servers ***/
 /**********************************************/
