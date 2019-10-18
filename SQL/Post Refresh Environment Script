@@ -102,13 +102,7 @@ SET Blob = CONVERT(varchar(MAX), @xmlDesktop)
 WHERE  DocumentTypeCode = 'WEB'
 AND DocumentName = @DesktopName
 AND DocumentStatusCode = '40'
---!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
---******** Temporary Email Mask ********
---!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-ALTER TABLE NAME DISABLE TRIGGER ALL
-UPDATE NAME
-SET EMAIL = CONCAT(ID,'@Domain.COM')
-ALTER TABLE NAME ENABLE TRIGGER ALL
+
 SET ANSI_DEFAULTS ON
 SET IMPLICIT_TRANSACTIONS OFF
 SET CONCAT_NULL_YIELDS_NULL ON
