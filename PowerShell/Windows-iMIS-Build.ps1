@@ -44,8 +44,8 @@ function InstallDeveloperTools
 
 function InstallSQLServerExpress
 {
-	#Install SQL Server Express
-	choco install sql-server-express
+	#Install SQL Server Developer
+	choco install sql-server-2017
 }
 
 <#*****************************************************************************************
