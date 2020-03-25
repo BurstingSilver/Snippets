@@ -110,6 +110,9 @@ choco install iiscrypto-cli
 
 #Apply nartac best practice SSL TLS Settings
 iiscryptocli.exe /template default
+
+#Install ASPNET
+Install-WindowsFeature Web-Asp-Net45 
 <#*****************************************************************************************
 Applications
 *****************************************************************************************#>
