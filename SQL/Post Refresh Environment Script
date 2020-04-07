@@ -1,7 +1,7 @@
 /**********************************************/
 /*** Variables ***/
 /**********************************************/
-DECLARE @publichingCode AS varchar(5) = 'A'
+DECLARE @publishingCode AS varchar(5) = 'A'
 DECLARE @imisInstallPath AS NVARCHAR(200) = N'C:\Program Files (x86)\ASI\Instance\'
 DECLARE @destDBName AS VARCHAR(25) = 'CLIENT DB Name'
 DECLARE @StaffWebsiteRootUrl varchar(MAX) = 'https://www.instanceurl.com/dev/'
@@ -53,7 +53,7 @@ ALTER TABLE NAME_ADDRESS ENABLE TRIGGER ALL
 UPDATE PublishServerRef
 SET LocalPublishPath = @imisInstallPath + 'net',
 LocalProtectedPath = @imisInstallPath + 'indexServiceProtected'
-WHERE PublishServerCode = @publichingCode
+WHERE PublishServerCode = @publishingCode
 SET NOCOUNT ON
 SET ANSI_DEFAULTS ON
 SET IMPLICIT_TRANSACTIONS OFF
