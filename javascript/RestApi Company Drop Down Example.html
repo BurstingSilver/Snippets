@@ -1,0 +1,42 @@
+<select id="ddlCompanies"></select>
+
+<script type="text/javascript">
+function populateOrganization()
+{
+	var clientContext = JSON.parse(jQuery("#__ClientContext").val())
+	var organizationList = 
+    jQuery.ajax("/api/iqa?QueryName=$/ContactManagement/DefaultSystem/Queries/Organizations/OrganizationList&limit=500", 
+    {
+        type: "GET",
+        async: false,
+        contentType: "application/json",
+        headers: {RequestVerificationToken: document.getElementById("__RequestVerificationToken").value
+    }});
+    
+     //Get Organization List
+    for (var i = 0; i < organizationList.responseJSON.Items.$values.length; i++) 
+    {
+        var id = organizationList.responseJSON.Items.$values[i].Properties.$values[2].Value;
+        var companyName = organizationList.responseJSON.Items.$values[i].Properties.$values[1].Value;
+        
+        //Set Drop Down Values
+        var option = document.createElement("OPTION");
+        //Set Customer Name in Text part.
+        option.innerHTML =companyName;
+        option.value = id;
+        //Add drop down option
+        ddlCompanies.options.add(option);
+    }
+};
+    
+function pageLoad()
+{
+    //add drop down options
+    populateOrganization();
+    
+    //bind to last selected organization
+    //todo: get company id and set drop down to that value
+    jQuery("#ddlCompanies").val(143)
+    
+}
+</script>
