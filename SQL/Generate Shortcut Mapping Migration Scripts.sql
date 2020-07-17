@@ -1,3 +1,10 @@
+/* 
+    USAGE: 
+    Set the @websiteRiSEName to the name of the RiSE site to pull all shortcuts for that site.
+    If you're unsure of the site name, check the Perspective table.
+    You can also set @websiteRiSEName to null to pull shortcuts for "All Sites"
+*/
+
 DECLARE @websiteRiSEName nvarchar(100) = 'Staff';
 
 SELECT 
