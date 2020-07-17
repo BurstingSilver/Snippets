@@ -1,0 +1,77 @@
+<script type="text/javascript">
+(function ($) {
+    function onPartialPostBack() 
+    {
+        var totalprice = 0;
+        $("table[id$=MooListTable] input:checkbox").each(function(){
+            //get the label
+            var label = $($(this).parent().parent().children().children("label")[0]).text();  
+
+            //these are regular boxes that should be left alone
+            if(label.indexOf("GST") === -1 && label.indexOf("QST") === -1)
+            {
+                var productIdentifier = label.split(' / ')[0];
+                if($(this).is(":checked"))
+                {
+                    //mark all corrisponding gst/qst items as checked
+                    $("td label:contains('" + productIdentifier + "')").each(function(index) {
+                        $(this).parents("tr").find("input:checkbox").prop('checked', true);
+                    });
+                }
+                else if(!$(this).is(":checked"))
+                {
+                    //unmark all the gst/qst items as unchecked
+                    $("td label:contains('" + productIdentifier + "')").each(function(index) {
+                        $(this).parents("tr").find("input:checkbox").prop('checked', false);
+                    });
+                }
+            }
+            else 
+            {
+                //handle the gst/qst
+                $(this).prop('onclick', 'return false;');
+                $(this).on('click', function(){return false;});    
+                $(this).on('keydown', function(){return false;});
+                $(this).css({opacity:"0.5", filter:"alpha(opacity=50)"});
+            }
+
+            //if its checked update the total and quantity
+            if($(this).is(":checked"))
+            {
+                var price = $(this).parents("tr").find("td").eq(3).find("span").eq(0).text().trim();
+
+                //Validate number
+                if(isNaN(parseFloat(price)))
+                {
+                    if($(this).parents("tr").find("td").eq(5).find("input").length == 1)
+                    {
+                        price = $(this).parents("tr").find("td").eq(5).find("input").val();
+                    }
+                    else
+                    {
+                        price = $(this).parents("tr").find("td").eq(5).text().trim();
+                    }
+                    if(isNaN(parseFloat(price)) )
+                    {
+                        price = 0;
+                    }
+                }
+                totalprice += parseFloat(price);
+                //update the quantity and price
+                $(this).parents("tr").find("td").eq(4).find("span").eq(0).text(1);
+                $(this).parents("tr").find("td").eq(5).find("span").eq(0).text(price);
+            }
+            else
+            {
+                //make sure price and qunaitity are rest
+                $(this).parents("tr").find("td").eq(4).find("span").eq(0).text(0);
+                $(this).parents("tr").find("td").eq(5).find("span").eq(0).text("0.00");
+            }
+        });
+
+        //update the subtotal
+        $("span[id$=SubtotalValueLabel]").text(totalprice.toFixed(2));
+    }
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(onPartialPostBack);
+})(jQuery);
+</script>
