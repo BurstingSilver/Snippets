@@ -12,7 +12,7 @@ SELECT
 	'''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''',' + 
 	'''' + URLMapping.DirectoryName + ''',' + 
 	'''' + URLMapping.[URL] + ''',' + 
-	'''' + CAST(URLMapping.WebsiteDocumentVersionKey AS nvarchar(38)) + ''',' + 
+	IIF(URLMapping.WebsiteDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.WebsiteDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
 	IIF(URLMapping.TargetDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.TargetDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
 	IIF(URLMapping.URLMappingDesc IS NULL,'NULL','''' + URLMapping.URLMappingDesc + '''') + ',' + 
 	IIF(URLMapping.URLParameters IS NULL,'NULL','''' + URLMapping.URLParameters + '''') + ',' + 
