@@ -1,0 +1,16 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>iPart</DefaultName>
+    <Name>UniteHereiPart</Name>
+    <Description>ClientSide iPart Written in TypeScript</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem SubType="" TargetFileName="$fileinputname$/$fileinputname$Controller.ts" ReplaceParameters="true">main.ts</ProjectItem>
+	<ProjectItem SubType="" TargetFileName="$fileinputname$/index.html" ReplaceParameters="true">index.html</ProjectItem>
+	<ProjectItem SubType="" TargetFileName="$fileinputname$/main.css" ReplaceParameters="true">main.css</ProjectItem>
+  </TemplateContent>
+</VSTemplate>
