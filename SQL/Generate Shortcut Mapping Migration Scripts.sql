@@ -8,7 +8,8 @@
 DECLARE @websiteRiSEName nvarchar(100) = 'Staff';
 
 SELECT 
-	'INSERT INTO URLMapping(URLMappingKey,DirectoryName,URL,WebsiteDocumentVersionKey,TargetDocumentVersionKey,URLMappingDesc,URLParameters,URLMappingTypeCode) VALUES (' + 
+	'IF NOT EXISTS (SELECT 1 FROM URLMapping WHERE URLMappingKey = ''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''')' + CHAR(13) + CHAR(10) + 
+	'    INSERT INTO URLMapping(URLMappingKey,DirectoryName,URL,WebsiteDocumentVersionKey,TargetDocumentVersionKey,URLMappingDesc,URLParameters,URLMappingTypeCode) VALUES (' + 
 	'''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''',' + 
 	'''' + URLMapping.DirectoryName + ''',' + 
 	'''' + URLMapping.[URL] + ''',' + 
