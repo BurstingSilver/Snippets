@@ -39,6 +39,4 @@ SELECT
 	CAST(IS_FOR_JOIN AS varchar(1)) + ',' + 
 	CAST(IS_FOR_RENEW AS varchar(1)) + ');' 
 FROM 
-	DuesCycles 
-WHERE 
-	CYCLE_NAME = 'ProHacViceRenewal';
+	DuesCycles;
