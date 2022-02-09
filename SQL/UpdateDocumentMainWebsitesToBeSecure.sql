@@ -17,7 +17,8 @@ FROM
 	[dbo].[DocumentMain] dm
 WHERE 
 	dm.[DocumentTypeCode] = 'WEB'
-	AND DocumentName NOT IN ('CS2', 'CS', 'Temporary');
+	AND dm.[DocumentName] NOT IN ('CS2', 'CS')
+	AND dm.[DocumentStatusCode] = 40;
 
 -- Loop through each document and update XML WebsiteRootUrl to use https
 DECLARE 
