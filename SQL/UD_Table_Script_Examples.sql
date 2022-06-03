@@ -7,20 +7,26 @@ GO
 
 IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'UD_TABLE')
 BEGIN
-	CREATE TABLE [dbo].[UD_TABLE](
-		[ID]		  [VARCHAR](10) NOT NULL,
-		[SEQN]	      [INT] NOT NULL,
-		[VC_FIELD]    [VARCHAR](255) NOT NULL DEFAULT (''), -- NOTE ** Always make varchar not null with default of empty string will cause issues with panels etc..
-		[BIT_FIELD]   [BIT] NOT NULL DEFAULT (0), -- NOTE ** Always make bit not null with default of 0 will cause issues with panels etc..
-		[DT_FIELD]	  [DATETIME] NULL,
-		[INT_FIELD]   [INT] NOT NULL DEFAULT(0), -- NOTE ** Always make int not null with default of 0 will cause issues with panels etc..
-		[MONEY_FIELD] [MONEY] NOT NULL DEFAULT(0.00), -- NOTE ** Always make money not null with default of 0.00 will cause issues with panels etc..
-		[TIME_STAMP]  [TIMESTAMP] NULL, 
-		CONSTRAINT [PK_CECE_CERTIFICATION] PRIMARY KEY CLUSTERED 
+	CREATE TABLE 
+		[dbo].[UD_TABLE](
+			[ID]		  [VARCHAR](10) NOT NULL,
+			[SEQN]	      [INT] NOT NULL,
+			[VC_FIELD]    [VARCHAR](255) NOT NULL DEFAULT (''), -- NOTE ** Always make varchar not null with default of empty string will cause issues with panels etc..
+			[BIT_FIELD]   [BIT] NOT NULL DEFAULT (0), -- NOTE ** Always make bit not null with default of 0 will cause issues with panels etc..
+			[DT_FIELD]	  [DATETIME] NULL,
+			[INT_FIELD]   [INT] NOT NULL DEFAULT(0), -- NOTE ** Always make int not null with default of 0 will cause issues with panels etc..
+			[MONEY_FIELD] [MONEY] NOT NULL DEFAULT(0.00), -- NOTE ** Always make money not null with default of 0.00 will cause issues with panels etc..
+			[TIME_STAMP]  [TIMESTAMP] NULL
+	CONSTRAINT 
+		[PK_UD_TABLE] 
+	PRIMARY KEY 
+		CLUSTERED 
 		(
 			[ID] ASC,
 			[SEQN] ASC
-		) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]) ON [PRIMARY]
+		)
+	WITH 
+		(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]) ON [PRIMARY]
 END
 GO
 
@@ -57,4 +63,26 @@ GO
 IF NOT EXISTS(SELECT * FROM UD_TABLE WHERE TABLE_NAME = 'UD_TABLE' AND FIELD_NAME = 'MONEY_FIELD')
 	INSERT INTO UD_Field (TABLE_NAME, FIELD_NAME, FIELD_TYPE, FIELD_LENGTH, PROMPT, SEQ, OBJ_HEIGHT, OBJ_WIDTH) 
 	VALUES ('UD_TABLE', 'MONEY_FIELD', 'Int', 0, 'Money Field', ISNULL((SELECT MAX(SEQ) FROM UD_Field WHERE TABLE_NAME = 'UD_TABLE'),0) + 1, 13, 150);
+GO
+
+-- Reorder seqn
+UPDATE 
+    udField 
+SET 
+    udField.SEQ = udField.NEW_SEQ 
+FROM 
+    (SELECT 
+        SEQ, 
+        ROW_NUMBER() OVER (ORDER BY [SEQ]) AS NEW_SEQ 
+    FROM 
+        UD_Field 
+    WHERE 
+        UD_Field.TABLE_NAME = 'UD_TABLE') AS udField 
+WHERE 
+    udField.SEQ <> udField.NEW_SEQ 
+GO
+
+-- Seed Counter
+IF NOT EXISTS(SELECT * FROM Counter WHERE COUNTER_NAME = 'UD_TABLE')
+	EXEC sp_iboGetCounter 'UD_TABLE' , 0, 0 
 GO
