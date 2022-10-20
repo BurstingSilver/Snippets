@@ -1,4 +1,4 @@
-﻿param (
+param (
     [Parameter()]
     [string]$ServerInstance,
     [Parameter()]
@@ -43,6 +43,17 @@ if((Get-WebAppPoolState -Name $AsiSchedulerAppPool).Value -ne "Stopped"){
 Write-Output ("Clearing content of lucene folder")
 $LucenePath = Join-Path -path $InstancePath -childpath "indexServiceProtected\Search\Lucene"
 Get-ChildItem -Path $LucenePath -Include *.* -File -Recurse | foreach { $_.Delete()}
+
+# Clear Task Queues etc..
+Invoke-Sqlcmd -Query "DELETE FROM TaskQueuePublishDetail WHERE ItemAction != 2" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
+
+Invoke-Sqlcmd -Query "DELETE FROM TaskQueue WHERE TaskQueueTypeId = 1 and TaskQueueId NOT IN (SELECT TaskQueueId FROM TaskQueuePublishDetail)" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
+
+Invoke-Sqlcmd -Query "DELETE FROM PublishMessageLog WHERE PublishRequestDetailKey NOT IN (SELECT PublishRequestDetailKey FROM PublishRequestDetail WHERE PublishedDateTime IS NOT NULL)" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
+Invoke-Sqlcmd -Query "DELETE FROM PublishRequestDetail WHERE PublishedDateTime IS NOT NULL" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
+Invoke-Sqlcmd -Query "DELETE FROM PublishRequest WHERE PublishRequestKey NOT IN (SELECT PublishRequestKey FROM PublishRequestDetail)" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
+
+Invoke-Sqlcmd -Query "UPDATE TaskQueueTriggerDetail SET TaskQueueStatusId = 1 WHERE TaskQueueStatusId = 2 AND StatusUpdatedOn < DATEADD(hour, -12, dbo.asi_GetAppDatetime())" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
 
 # Recreate publishing queue and service broker
 Write-Output ("Recreating publishing queue and service broker")
