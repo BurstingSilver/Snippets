@@ -1,0 +1,26 @@
+-- Get a list of all PA jobs including actions, triggers etc..
+SELECT
+	*
+FROM
+	(SELECT 
+		TaskDefinitionName AS TASK_NAME,
+		TaskDefinitionDesc AS TASK_DESC,
+		ISNULL(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:IsActive)[1]', 'nvarchar(max)'), 'false') as [IS_ACTIVE],
+		CAST(SerializedTaskDefinition as XML) AS XML_DEFINITION,
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[1]', 'nvarchar(max)') as [ACTION],
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[2]', 'nvarchar(max)') as [ACTION2],
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[3]', 'nvarchar(max)') as [ACTION3],
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[4]', 'nvarchar(max)') as [ACTION4],
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[5]', 'nvarchar(max)') as [ACTION5],
+		CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";declare namespace ns2="http://schemas.datacontract.org/2004/07/Asi.Soa.Communications.DataContracts";(/ns:TaskDefinitionData/ns:Actions/ns:Action/ns2:Description)[6]', 'nvarchar(max)') as [ACTION6],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[1]', 'nvarchar(max)') AS TIME) as [TRIGGER],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[2]', 'nvarchar(max)') AS TIME) as [TRIGGER2],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[3]', 'nvarchar(max)') AS TIME) as [TRIGGER3],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[4]', 'nvarchar(max)') AS TIME) as [TRIGGER4],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[5]', 'nvarchar(max)') AS TIME) as [TRIGGER5],
+		CAST(CAST(SerializedTaskDefinition as XML).value('declare namespace ns="http://schemas.imis.com/2008/01/CommunicationsDataContracts";(/ns:TaskDefinitionData/ns:Triggers/ns:Trigger/ns:Recurrence/ns:CalendarSchedule/ns:Time)[6]', 'nvarchar(max)') AS TIME) as [TRIGGER6]
+	FROM 
+		TaskDefinition
+	WHERE 
+		TaskDefinitionIsSystem = 0 
+		AND TaskDefinitionName NOT LIKE 'ZZ%') as p
