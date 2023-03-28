@@ -8,6 +8,7 @@
 DECLARE @websiteRiSEName nvarchar(100) = 'Staff';
 
 SELECT 
+	URLMapping.DirectoryName,
 	'IF NOT EXISTS (SELECT 1 FROM URLMapping WHERE URLMappingKey = ''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''')' + CHAR(13) + CHAR(10) + 
 	'    INSERT INTO URLMapping(URLMappingKey,DirectoryName,URL,WebsiteDocumentVersionKey,TargetDocumentVersionKey,URLMappingDesc,URLParameters,URLMappingTypeCode) VALUES (' + 
 	'''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''',' + 
@@ -29,5 +30,7 @@ WHERE
 		FROM 
 			Perspective 
 		WHERE 
-			Perspective.WebsiteKey = URLMapping.WebsiteDocumentVersionKey AND 
-			Perspective.PerspectiveName = @websiteRiSEName);
+			Perspective.WebsiteKey = URLMapping.WebsiteDocumentVersionKey 
+			AND Perspective.PerspectiveName = @websiteRiSEName)
+ORDER BY
+	UrlMapping.DirectoryName;
