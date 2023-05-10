@@ -8,29 +8,23 @@
 DECLARE @websiteRiSEName nvarchar(100) = 'Staff';
 
 SELECT 
-	URLMapping.DirectoryName,
-	'IF NOT EXISTS (SELECT 1 FROM URLMapping WHERE URLMappingKey = ''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''')' + CHAR(13) + CHAR(10) + 
-	'    INSERT INTO URLMapping(URLMappingKey,DirectoryName,URL,WebsiteDocumentVersionKey,TargetDocumentVersionKey,URLMappingDesc,URLParameters,URLMappingTypeCode) VALUES (' + 
-	'''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''',' + 
-	'''' + URLMapping.DirectoryName + ''',' + 
-	'''' + URLMapping.[URL] + ''',' + 
-	IIF(URLMapping.WebsiteDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.WebsiteDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
-	IIF(URLMapping.TargetDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.TargetDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
-	IIF(URLMapping.URLMappingDesc IS NULL,'NULL','''' + URLMapping.URLMappingDesc + '''') + ',' + 
-	IIF(URLMapping.URLParameters IS NULL,'NULL','''' + URLMapping.URLParameters + '''') + ',' + 
-	+ CAST(URLMapping.URLMappingTypeCode AS nvarchar(2)) + ');' 
+    URLMapping.DirectoryName,
+    ISNULL(p.PerspectiveName, 'allsites') AS WebSiteName,
+    'IF NOT EXISTS (SELECT 1 FROM URLMapping WHERE URLMappingKey = ''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''')' + CHAR(13) + CHAR(10) + 
+    '    INSERT INTO URLMapping(URLMappingKey,DirectoryName,URL,WebsiteDocumentVersionKey,TargetDocumentVersionKey,URLMappingDesc,URLParameters,URLMappingTypeCode) VALUES (' + 
+    '''' + CAST(URLMapping.URLMappingKey AS nvarchar(38)) + ''',' + 
+    '''' + URLMapping.DirectoryName + ''',' + 
+    '''' + URLMapping.[URL] + ''',' + 
+    IIF(URLMapping.WebsiteDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.WebsiteDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
+    IIF(URLMapping.TargetDocumentVersionKey IS NULL,'NULL','''' + CAST(URLMapping.TargetDocumentVersionKey AS nvarchar(38)) + '''') + ',' + 
+    IIF(URLMapping.URLMappingDesc IS NULL,'NULL','''' + URLMapping.URLMappingDesc + '''') + ',' + 
+    IIF(URLMapping.URLParameters IS NULL,'NULL','''' + URLMapping.URLParameters + '''') + ',' + 
+    + CAST(URLMapping.URLMappingTypeCode AS nvarchar(2)) + ');' 
 FROM 
-	URLMapping 
+    URLMapping 
+    LEFT OUTER JOIN Perspective p ON URLMapping.WebsiteDocumentVersionKey = p.WebsiteKey
 WHERE 
-	(@websiteRiSEName IS NULL AND 
-	URLMapping.WebsiteDocumentVersionKey IS NULL) OR  
-	EXISTS (
-		SELECT 
-			1 
-		FROM 
-			Perspective 
-		WHERE 
-			Perspective.WebsiteKey = URLMapping.WebsiteDocumentVersionKey 
-			AND Perspective.PerspectiveName = @websiteRiSEName)
+     @websiteRiSEName IS NULL 
+     OR p.PerspectiveName = @websiteRiSEName
 ORDER BY
-	UrlMapping.DirectoryName;
+    UrlMapping.DirectoryName;
