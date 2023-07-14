@@ -6,7 +6,7 @@ param (
     [Parameter()]
     [string]$Username,
     [Parameter()]
-    [pscredential]$Password,
+    [string]$Password,
     [Parameter()]
     [string]$AsiSchedulerAppPool,
     [Parameter()]
@@ -61,7 +61,7 @@ function Clear-Lucene ($InstancePath) {
     Get-ChildItem -Path $LucenePath -Include *.* -File -Recurse | ForEach-Object { $_.Delete()}
 }
 
-function Clear-Task-Queues ($ServerInstance, $Database, $Username, [PSCredential] $Password) {
+function Clear-Task-Queues ($ServerInstance, $Database, $Username, $Password) {
     Write-Output ("Clearing task queues")
     Invoke-Sqlcmd -Query "DELETE FROM TaskQueuePublishDetail" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
     Invoke-Sqlcmd -Query "DELETE FROM TaskQueue WHERE TaskQueueTypeId = 1 and TaskQueueId NOT IN (SELECT TaskQueueId FROM TaskQueuePublishDetail)" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
@@ -70,7 +70,7 @@ function Clear-Task-Queues ($ServerInstance, $Database, $Username, [PSCredential
     Invoke-Sqlcmd -Query "DELETE FROM PublishRequestDetail" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
 }
 
-function Reset-Publishing-Service ($ServerInstance, $Database, $Username, [PSCredential] $Password) {
+function Reset-Publishing-Service ($ServerInstance, $Database, $Username, $Password) {
     Write-Output ("Recreating publishing queue and service broker")
     Invoke-Sqlcmd -Query "DECLARE @name VARCHAR(MAX) DECLARE db_cursor CURSOR FOR SELECT name FROM sys.service_queues WHERE is_ms_shipped != 1 OPEN db_cursor FETCH NEXT FROM db_cursor INTO @name WHILE @@FETCH_STATUS = 0 BEGIN PRINT CONCAT('Dropping Service Broker Service & Queue: ', @name) DECLARE @cmd VARCHAR(1000) = CONCAT('DROP SERVICE [', IIF(@name = 'iMISPublishQueue', 'iMISPublishService', @name), ']', ' DROP QUEUE [', @name, ']') EXEC (@cmd) FETCH NEXT FROM db_cursor INTO @name END CLOSE db_cursor DEALLOCATE db_cursor" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
     Invoke-Sqlcmd -Query "EXEC asi_EnsurePublishQueueAndServiceBroker" -ServerInstance $ServerInstance -Database $Database -Username $Username -Password $Password
