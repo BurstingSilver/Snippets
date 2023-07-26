@@ -10,11 +10,11 @@ param (
     [Parameter()]
     [string]$AsiSchedulerAppPool,
     [Parameter()]
-	[string]$iMISAppPool,
+    [string]$iMISAppPool,
     [Parameter()]
     [string]$InstancePath,
-	[Parameter()]
-	[string]$nettmpPath,
+    [Parameter()]
+    [string]$nettmpPath,
     [switch]
     $SkipClearLucene,
     [switch]
