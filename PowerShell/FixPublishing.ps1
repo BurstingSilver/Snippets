@@ -10,7 +10,11 @@ param (
     [Parameter()]
     [string]$AsiSchedulerAppPool,
     [Parameter()]
+	[string]$iMISAppPool,
+    [Parameter()]
     [string]$InstancePath,
+	[Parameter()]
+	[string]$nettmpPath,
     [switch]
     $SkipClearLucene,
     [switch]
@@ -46,6 +50,10 @@ function Stop-Scheduler ($AsiSchedulerAppPool) {
     if((Get-WebAppPoolState -Name $AsiSchedulerAppPool).Value -ne "Stopped"){
         Stop-AppPool $AsiSchedulerAppPool 120
     }
+	
+	if((Get-WebAppPoolState -Name $iMISAppPool).Value -ne "Stopped"){
+		Stop-AppPool $iMISAppPool 120
+    }
 }
 
 function Start-Scheduler ($AsiSchedulerAppPool) {
@@ -53,12 +61,18 @@ function Start-Scheduler ($AsiSchedulerAppPool) {
         Write-Output ("Starting Application Pool: {0}" -f $AsiSchedulerAppPool)
         Start-WebAppPool -Name $AsiSchedulerAppPool
     }
+	
+	if((Get-WebAppPoolState -Name $iMISAppPool).Value -ne "Started"){
+        Write-Output ("Starting Application Pool: {0}" -f $iMISAppPool)
+		Start-WebAppPool -Name $iMISAppPool
+    }
 }
 
 function Clear-Lucene ($InstancePath) {
     Write-Output ("Clearing content of lucene folder")
     $LucenePath = Join-Path -path $InstancePath -childpath "indexServiceProtected\Search\Lucene"
     Get-ChildItem -Path $LucenePath -Include *.* -File -Recurse | ForEach-Object { $_.Delete()}
+	Get-ChildItem -Path $nettmpPath -Include *.* -File -Recurse | ForEach-Object { $_.Delete()}
 }
 
 function Clear-Task-Queues ($ServerInstance, $Database, $Username, $Password) {
@@ -105,3 +119,10 @@ if($PSBoundParameters.ContainsKey("SkipStartScheduler")) {
 } else {
     Start-Scheduler $AsiSchedulerAppPool
 }
+
+
+
+
+
+
+
